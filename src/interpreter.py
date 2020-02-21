@@ -668,6 +668,35 @@ class SonicPiInterpreter(OSCInterpreter):
     def stop_sound(cls):
         return 'osc_send({!r}, {}, "/stop-all-jobs")'.format(cls.host, cls.port)
 
+
+class BarryInterpreter(BuiltinInterpreter):
+    path = "barry --audio=jack"
+    filetype = ".baz"
+    name = "Barry"
+
+    @classmethod
+    def setup(cls):
+        cls.keywords = [":", "{", "}", "--", "->", ";"]
+        cls.keyword_regex = compile_regex(cls.keywords)
+        return
+
+    @classmethod
+    def find_comment(cls, string):
+        instring, instring_char = False, ""
+        for i, char in enumerate(string):
+            if char == "\\":
+                if (i + 1) < len(string) and string[i + 1] == " ":
+                    return [(i, len(string))]
+        return []
+
+    @staticmethod
+    def format(string):
+        return ":{\n" + string + "\n:}\n"
+
+    @classmethod
+    def stop_sound(cls):
+        return ": audio { c t -- o } 0 i8 ;"
+
         
 # Set up ID system
 
@@ -676,6 +705,7 @@ langtypes = { FOXDOT        : FoxDotInterpreter,
               TIDALSTACK    : StackTidalInterpreter,
               SUPERCOLLIDER : SuperColliderInterpreter,
               SONICPI       : SonicPiInterpreter,
+              BARRY         : BarryInterpreter,
               DUMMY         : DummyInterpreter }
 
 for lang_id, lang_cls in langtypes.items():
