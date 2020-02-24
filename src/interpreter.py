@@ -670,7 +670,7 @@ class SonicPiInterpreter(OSCInterpreter):
 
 
 class BarryInterpreter(BuiltinInterpreter):
-    path = "barry --audio=jack"
+    path = "barrence barry.baz"
     filetype = ".baz"
     name = "Barry"
 
